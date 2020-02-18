@@ -67,10 +67,16 @@ class mynet(nn.Module):
 
 net=mynet()
 critetion=nn.BCELoss()#定义二分类损失函数
-optimizer=torch.optim.SGD(net.parameters(),lr=0.001,momentum=0.9)#随机梯度下降优化函数
-epochs=50000
+optimizer=optim.SGD(net.parameters(),lr=0.001,momentum=0.9)#随机梯度下降优化函数
+epochs=10000
 for epoch in range(epochs):
     out=net(x_train)
+    mask=out.ge(0.5).float()#判断输出结果如果大于0.5，就等于1，如果小于0.5就等于0
+    correct=(mask==y_train).sum()#判断mask与真实标签相等的个数
+    acc=correct.item()/100#设定准确率
+    print(epoch,mask)
+    print(acc)
+    #acc=correct.data[0]/x_train.size(0)
     loss=critetion(out,y_train)
     loss.backward()
     optimizer.step()
